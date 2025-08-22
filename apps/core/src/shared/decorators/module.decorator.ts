@@ -1,5 +1,4 @@
-import { Container } from 'inversify';
-import { Hono } from 'hono';
+import { Container } from "inversify";
 
 export interface ModuleMetadata {
   imports?: any[];
@@ -12,7 +11,7 @@ export interface ModuleDefinition {
   container: Container;
 }
 
-const MODULE_METADATA = Symbol('MODULE_METADATA');
+const MODULE_METADATA = Symbol("MODULE_METADATA");
 
 export function Module(metadata: ModuleMetadata): ClassDecorator {
   return function <T extends Function>(target: T): T {
