@@ -27,5 +27,126 @@ describe("Product", () => {
     expect(product.domainEvents[0].eventType).toBe("ProductCreated");
   });
 
-  // ... resten av testerna
+  it("should update product name", () => {
+    // Arrange
+    const name = new ProductName("Test Product");
+    const description = new ProductDescription("A great test product");
+    const money = new Money(100, "SEK");
+    const price = new ProductPrice(money);
+    const sku = "TEST-001";
+    const product = Product.create(name, description, price, sku);
+    
+    const newName = new ProductName("Updated Product");
+
+    // Act
+    product.updateName(newName);
+
+    // Assert
+    expect(product.name.value).toBe("Updated Product");
+  });
+
+  it("should update product price and add domain event", () => {
+    // Arrange
+    const name = new ProductName("Test Product");
+    const description = new ProductDescription("A great test product");
+    const money = new Money(100, "SEK");
+    const price = new ProductPrice(money);
+    const sku = "TEST-001";
+    const product = Product.create(name, description, price, sku);
+    
+    const newMoney = new Money(150, "SEK");
+    const newPrice = new ProductPrice(newMoney);
+
+    // Act
+    product.updatePrice(newPrice);
+
+    // Assert
+    expect(product.price.effectivePrice.amount).toBe(150);
+    expect(product.domainEvents).toHaveLength(2); // ProductCreated + ProductPriceChanged
+    expect(product.domainEvents[1].eventType).toBe("ProductPriceChanged");
+  });
+
+  it("should activate product", () => {
+    // Arrange
+    const name = new ProductName("Test Product");
+    const description = new ProductDescription("A great test product");
+    const money = new Money(100, "SEK");
+    const price = new ProductPrice(money);
+    const sku = "TEST-001";
+    const product = Product.create(name, description, price, sku);
+
+    // Act
+    product.activate();
+
+    // Assert
+    expect(product.status).toBe(ProductStatus.Active);
+    expect(product.isActive).toBe(true);
+  });
+
+  it("should deactivate product", () => {
+    // Arrange
+    const name = new ProductName("Test Product");
+    const description = new ProductDescription("A great test product");
+    const money = new Money(100, "SEK");
+    const price = new ProductPrice(money);
+    const sku = "TEST-001";
+    const product = Product.create(name, description, price, sku);
+    product.activate();
+
+    // Act
+    product.deactivate();
+
+    // Assert
+    expect(product.status).toBe(ProductStatus.Inactive);
+    expect(product.isActive).toBe(false);
+  });
+
+  it("should not activate discontinued product", () => {
+    // Arrange
+    const name = new ProductName("Test Product");
+    const description = new ProductDescription("A great test product");
+    const money = new Money(100, "SEK");
+    const price = new ProductPrice(money);
+    const sku = "TEST-001";
+    const product = Product.create(name, description, price, sku);
+    product.discontinue();
+
+    // Act & Assert
+    expect(() => product.activate()).toThrow("Cannot activate a discontinued product");
+  });
+
+  it("should add and remove tags", () => {
+    // Arrange
+    const name = new ProductName("Test Product");
+    const description = new ProductDescription("A great test product");
+    const money = new Money(100, "SEK");
+    const price = new ProductPrice(money);
+    const sku = "TEST-001";
+    const product = Product.create(name, description, price, sku);
+
+    // Act
+    product.addTag("electronics");
+    product.addTag("gadget");
+    product.removeTag("gadget");
+
+    // Assert
+    expect(product.tags).toContain("electronics");
+    expect(product.tags).not.toContain("gadget");
+    expect(product.tags).toHaveLength(1);
+  });
+
+  it("should validate required fields", () => {
+    // Act & Assert
+    expect(() => {
+      new ProductName("");
+    }).toThrow("Product name cannot be empty");
+
+    expect(() => {
+      new ProductName("A".repeat(256));
+    }).toThrow("Product name cannot exceed 255 characters");
+
+    expect(() => {
+      new ProductDescription("A".repeat(5001));
+    }).toThrow("Product description cannot exceed 5000 characters");
+  });
 });
