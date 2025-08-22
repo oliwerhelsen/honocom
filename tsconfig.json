@@ -15,7 +15,9 @@
   },
   "references": [
     { "path": "packages/domain/shared-kernel" },
-    { "path": "packages/domain/catalog" }
-    // { "path": "packages/domain/orders" }
+    { "path": "packages/domain/catalog" },
+    { "path": "packages/application/catalog" },
+    { "path": "packages/infrastructure/shared" },
+    { "path": "packages/infrastructure/catalog" }
   ]
 }
