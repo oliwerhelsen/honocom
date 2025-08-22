@@ -10,10 +10,15 @@ import { OrdersModule } from '../orders/orders.module';
   imports: [CatalogModule, OrdersModule],
   providers: [CheckoutService, CheckoutWorkflow],
   exports: [CheckoutService],
-  routes: (app: Hono) => {
-    // Get service instance from container
-    const container = new CheckoutModule().getContainer();
-    const checkoutService = container.get(CheckoutService);
+})
+export class CheckoutModule extends BaseModule {
+  constructor() {
+    super();
+    console.log('🛒 CheckoutModule initialized');
+  }
+
+  registerRoutes(app: Hono): void {
+    const checkoutService = this.container.get<CheckoutService>('CheckoutService');
     
     // Checkout routes
     app.post('/api/v1/checkout', async (c) => {
@@ -56,11 +61,5 @@ import { OrdersModule } from '../orders/orders.module';
         timestamp: new Date().toISOString()
       });
     });
-  }
-})
-export class CheckoutModule extends BaseModule {
-  constructor() {
-    super();
-    console.log('🛒 CheckoutModule initialized');
   }
 }

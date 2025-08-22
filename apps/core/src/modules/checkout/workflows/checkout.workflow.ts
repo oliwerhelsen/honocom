@@ -1,6 +1,4 @@
-import { injectable, inject } from 'inversify';
-import { CatalogService } from '../../catalog/services/catalog.service';
-import { OrdersService } from '../../orders/services/orders.service';
+import { injectable } from 'inversify';
 
 export interface CartItem {
   productId: string;
@@ -23,10 +21,7 @@ export interface CheckoutResult {
 
 @injectable()
 export class CheckoutWorkflow {
-  constructor(
-    @inject('CatalogService') private catalogService: CatalogService,
-    @inject('OrdersService') private ordersService: OrdersService
-  ) {}
+  constructor() {}
 
   async processCheckout(cart: Cart): Promise<CheckoutResult> {
     try {
@@ -51,15 +46,13 @@ export class CheckoutWorkflow {
         };
       }
 
-      // Step 4: Create order
-      const orderData = {
+      // Step 4: Create order (mock)
+      const order = await this.createOrder({
         customerId: cart.customerId,
         items: validatedItems,
         currency: cart.currency,
         paymentId: paymentResult.paymentId
-      };
-
-      const order = await this.ordersService.createOrder(orderData);
+      });
 
       // Step 5: Reserve inventory (mock)
       await this.reserveInventory(validatedItems);
@@ -94,12 +87,13 @@ export class CheckoutWorkflow {
     const validatedItems = [];
 
     for (const item of items) {
-      // Get product details from catalog
-      const product = await this.catalogService.getProduct(item.productId);
-      
-      if (!product) {
-        throw new Error(`Product not found: ${item.productId}`);
-      }
+      // Mock product validation - in real implementation would call catalog service
+      const product = {
+        id: item.productId,
+        name: `Product ${item.productId}`,
+        price: 299, // Mock price
+        currency: 'SEK'
+      };
 
       validatedItems.push({
         productId: item.productId,
@@ -153,6 +147,27 @@ export class CheckoutWorkflow {
     
     // For now, assume all items are in stock
     console.log('✅ Inventory reserved successfully');
+  }
+
+  private async createOrder(orderData: any) {
+    // Mock order creation - in real implementation would call orders service
+    console.log('📝 Creating order for customer:', orderData.customerId);
+    
+    // Simulate order creation delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const order = {
+      id: `order_${Date.now()}`,
+      customerId: orderData.customerId,
+      items: orderData.items,
+      currency: orderData.currency,
+      paymentId: orderData.paymentId,
+      status: 'created',
+      createdAt: new Date().toISOString()
+    };
+    
+    console.log('✅ Order created:', order.id);
+    return order;
   }
 
   private async sendOrderConfirmation(orderId: string, customerId: string) {

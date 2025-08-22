@@ -18,12 +18,6 @@ export abstract class BaseModule {
       const serviceName = provider.name;
       this.container.bind(serviceName).to(provider).inTransientScope();
     });
-
-    // Bind controllers to container
-    this.metadata.controllers?.forEach(controller => {
-      const controllerName = controller.name;
-      this.container.bind(controllerName).to(controller).inTransientScope();
-    });
   }
 
   getContainer(): Container {

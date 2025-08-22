@@ -5,10 +5,9 @@
   "main": "./dist/main.js",
   "types": "./dist/main.d.ts",
   "scripts": {
-    "dev": "tsx watch src/main-simple.ts",
-    "dev:full": "tsx watch src/main.ts",
+    "dev": "tsx watch src/main.ts",
     "build": "tsc",
-    "start": "node dist/main-simple.js"
+    "start": "node dist/main.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.0",

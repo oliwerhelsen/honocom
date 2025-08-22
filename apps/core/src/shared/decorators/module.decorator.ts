@@ -5,8 +5,6 @@ export interface ModuleMetadata {
   imports?: any[];
   providers?: any[];
   exports?: any[];
-  controllers?: any[];
-  routes?: (app: Hono) => void;
 }
 
 export interface ModuleDefinition {
