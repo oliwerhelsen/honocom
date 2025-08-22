@@ -28,11 +28,9 @@ export abstract class BaseModule {
     return this.metadata;
   }
 
-  // Method to register routes with Hono app
+  // Method to register routes with Hono app - to be implemented by subclasses
   registerRoutes(app: Hono): void {
-    if (this.metadata.routes) {
-      this.metadata.routes(app);
-    }
+    // Default implementation - subclasses should override this
   }
 
   // Method to get exported providers for other modules
